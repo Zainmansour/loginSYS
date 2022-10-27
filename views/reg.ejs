@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="images/favicon.png" />
+    <title>Registration</title>
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/styles.css" />
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&family=Courgette&family=Fraunces:opsz,wght@9..144,500&family=Fredoka+One&family=Jost:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Libre+Franklin:wght@300;600;700&family=Manrope:wght@500;700&family=Montserrat:wght@100;200;300;400;500;700;900&family=Nokora:wght@300;400;900&family=Nunito:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Open+Sans&family=Paytone+One&family=Poppins:wght@400;600&family=Yanone+Kaffeesatz:wght@700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="css/all.css" />
+  </head>
+
+  <body>
+    <main>
+      <form id="reg-form">
+        <input
+          type="text"
+          name="Fname"
+          id="Fname"
+          placeholder="First name"
+          required
+        />
+        <input
+          type="text"
+          name="Lname"
+          id="Lname"
+          placeholder="Last name"
+          required
+        />
+        <input
+          type="text"
+          name="username"
+          id="username"
+          placeholder="Username"
+          required
+        />
+        <input
+          type="text"
+          name="email"
+          id="email"
+          placeholder="example@example.domain"
+          required
+        />
+        <input
+          type="password"
+          name="password"
+          id="password"
+          placeholder="Password"
+          required
+          maxlength="25"
+          minlength="6"
+        />
+        <button type="submit">Sign Up</button>
+        <p class="reminder">
+          Already have an account? <a href="login">Login</a>
+        </p>
+        <p class="error"><span>!</span><i></i></p>
+      </form>
+      <div class="heading">
+        <h1>Sign Up</h1>
+        <img src="images/sign-up.png" alt="" />
+      </div>
+    </main>
+    <div class="modal success">
+      <div class="successful">
+        <h3>Registration Completed, Welcome!</h3>
+        <img src="images/completed.png" alt="" />
+      </div>
+      <button onclick="closeModal()">Ok</button>
+    </div>
+    <script>
+      let form = document.getElementById("reg-form");
+      form.addEventListener("submit", sendRequest);
+      async function sendRequest(e) {
+        e.preventDefault();
+        let Fname = document.getElementById("Fname").value;
+        let Lname = document.getElementById("Lname").value;
+        let username = document.getElementById("username").value;
+        let email = document.getElementById("email").value;
+        let password = document.getElementById("password").value;
+        let result = await fetch(window.location.href, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            Fname,
+            Lname,
+            username,
+            email,
+            password,
+          }),
+        })
+          .then((res) => res.json())
+          .catch((err) => console.log(err));
+        if (result.status === "success") {
+          document.querySelector(".modal").style.opacity = "1";
+          document.body.style.backdropFilter = "brightness(.1)";
+          document.querySelector("main").style.cssText = `
+        filter: brightness(.1);
+        margin-top: -1em;`;
+          document.querySelectorAll("main form input").forEach((input) => {
+            input.disabled = true;
+          });
+          document
+            .querySelector("main form button")
+            .setAttribute("disabled", true);
+          document.querySelector("main form button").style.cursor = "default";
+
+          document.body.style.userSelect = "none";
+
+          document
+            .querySelector("main form .reminder a")
+            .setAttribute("disabled", true);
+          document.querySelector("main form .reminder a").style.cursor =
+            "default";
+        } else {
+          document.querySelector(".error i").textContent = result.msg;
+          document.querySelector(".error").style.opacity = "1";
+
+          document.querySelectorAll("main form input").forEach((input) => {
+            input.disabled = false;
+          });
+
+          document
+            .querySelector("main form button")
+            .removeAttribute("disabled");
+          document.querySelector("main form button").style.cursor = "pointer";
+
+          document.body.style.userSelect = "auto";
+
+          document
+            .querySelector("main form .reminder a")
+            .removeAttribute("disabled");
+          document.querySelector("main form .reminder a").style.cursor =
+            "pointer";
+        }
+      }
+      window.onload = () => {
+        document.body.style.opacity = "1";
+      };
+
+      function closeModal() {
+        document.querySelector(".modal").style.opacity = "0";
+        document.body.style.backdropFilter = "brightness(1)";
+        document.querySelector("main").style.filter = "brightness(1)";
+
+        document.querySelectorAll("main form input").forEach((input) => {
+          input.disabled = false;
+        });
+
+        document.querySelector("main form button").removeAttribute("disabled");
+        document.querySelector("main form button").style.cursor = "pointer";
+
+        document.body.style.userSelect = "auto";
+
+        document
+          .querySelector("main form .reminder a")
+          .removeAttribute("disabled");
+        document.querySelector("main form .reminder a").style.cursor =
+          "pointer";
+      }
+    </script>
+  </body>
+</html>
